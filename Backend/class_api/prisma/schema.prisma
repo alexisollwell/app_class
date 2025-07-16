@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema", "relationJoins"]
+  output          = "../generated/prisma"
+  previewFeatures = ["multiSchema", "relationJoins", "views"]
 }
 
 datasource db {
@@ -94,14 +95,49 @@ model ServiceType {
 }
 
 model Student {
-  studentId        Int       @id(map: "PK__Student__4D11D63C743763C7") @default(autoincrement())
-  name             String?   @db.NVarChar(100)
-  email            String?   @db.NVarChar(100)
-  phoneNumber      String?   @db.VarChar(50)
-  careerInCourse   String?   @db.NVarChar(100)
-  classGroup       String?   @db.NVarChar(50)
-  enrollmentNumber String?   @db.NVarChar(50)
-  Service          Service[]
+  studentId          Int       @id(map: "PK__Student__4D11D63C743763C7") @default(autoincrement())
+  name               String?   @db.NVarChar(100)
+  email              String?   @db.NVarChar(100)
+  phoneNumber        String?   @db.VarChar(50)
+  careerInCourse     String?   @db.NVarChar(100)
+  classGroup         String?   @db.NVarChar(50)
+  enrollmentNumber   String?   @db.NVarChar(50)
+  careerModality     String?   @db.NVarChar(50)
+  grade              Int?
+  studentStatus_id   Int?
+  institutionalEmail String?   @db.NVarChar(100)
+  Service            Service[]
+
+  @@schema("cs")
+}
+
+view ServiceActivitiesByUser {
+  serviceActivitieId Int       @unique
+  student_id         Int?
+  description        String?   @db.NVarChar(Max)
+  postingDate        DateTime? @db.Date
+  hours              Int?
+
+  @@schema("cs")
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view TotalActivityHours {
+  service_id Int @unique
+  totalHours Int?
+
+  @@schema("cs")
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view ServiceProgressView {
+  serviceId          Int @unique
+  studentId          Int
+  name               String? @db.NVarChar(100)
+  institutionalEmail String? @db.NVarChar(100)
+  type               String? @db.VarChar(100)
+  totalHours         Int?
+  serviceProgress    Int?
 
   @@schema("cs")
 }
