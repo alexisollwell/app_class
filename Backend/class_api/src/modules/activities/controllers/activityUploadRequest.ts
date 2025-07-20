@@ -10,12 +10,15 @@ export async function uploadActivitiesRequest(c: Context): Promise<Request<strin
     const activities = await c.get('parsedBody');
     let querie;
 
-    // Obtenemos el service_id del contexto, que debe haber sido establecido en una etapa anterior del flujo
-    const service_id = c.get('service_id');
+    // Obtenemos el serviceId del contexto, que debe haber sido establecido en una etapa anterior del flujo
+    const service_id = c.header('serviceId');
     const activityList: Activity[] = [];
 
     // Mapeamos las actividades recibidas.
     try {
+        //Convertimos header a numero
+        const id = Number(service_id);
+
         for (const activity of activities) {
             const mappedEntry = await activityMapping.transformData(activity);
 
@@ -24,7 +27,8 @@ export async function uploadActivitiesRequest(c: Context): Promise<Request<strin
             }
         }
 
-        querie = await uploadActivities(activityList, connection, service_id); 
+        // Subimos las actividades realizadas por el usuario a la db.
+        querie = await uploadActivities(activityList, connection, id); 
         return querie
 
     } catch (error) {

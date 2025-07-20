@@ -26,6 +26,8 @@ export async function uploadActivities(
       )
     );
 
+    
+
     if (createdActivities.length === 0) {
         return {
             success: false,
