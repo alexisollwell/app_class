@@ -96,7 +96,6 @@ model ServiceType {
 model Student {
   studentId          Int       @id(map: "PK__Student__4D11D63C743763C7") @default(autoincrement())
   name               String?   @db.NVarChar(100)
-  email              String?   @db.NVarChar(100)
   phoneNumber        String?   @db.VarChar(50)
   careerInCourse     String?   @db.NVarChar(100)
   classGroup         String?   @db.NVarChar(50)
@@ -105,7 +104,19 @@ model Student {
   grade              Int?
   studentStatus_id   Int?
   institutionalEmail String?   @db.NVarChar(100)
+  user_id            Int?
   Service            Service[]
+  User               User?     @relation(fields: [user_id], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "StudentToUser")
+
+  @@schema("cs")
+}
+
+model User {
+  userId   Int       @id(map: "PK_cs.User") @default(autoincrement())
+  userName String    @db.VarChar(50)
+  pssKey   String    @db.NVarChar(100)
+  email    String    @db.NVarChar(100) @unique
+  Student  Student[]
 
   @@schema("cs")
 }
@@ -130,7 +141,7 @@ view TotalActivityHours {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view ServiceProgressView {
-  serviceId          Int @unique
+  serviceId          Int     @unique
   studentId          Int
   name               String? @db.NVarChar(100)
   institutionalEmail String? @db.NVarChar(100)

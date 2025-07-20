@@ -7,7 +7,7 @@ import { auth } from './modules/authentication/routes/login.js'
 
 
 const app = new Hono()
-app.use("*", authMiddleware)
+//app.use("*", authMiddleware)
 app.get('/', (c) => {
   return c.text('API FUNCIONANDO!')
 })

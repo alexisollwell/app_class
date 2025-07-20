@@ -1,8 +1,8 @@
 SELECT
   MAX(service_id) AS service_id,
-  Sum(hours) AS totalHours
+  SUM(hours) AS totalHours
 FROM
-  [CollegeService].[cs].[ServiceActivities]
+  cs.ServiceActivities
 GROUP BY
   service_id,
   serviceActivitieId;

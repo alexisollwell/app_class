@@ -1,14 +1,14 @@
-import { account } from "../../../types/account.js";
-import { Request } from "../../../types/extractionGeneric.js";
+import { Request } from "../../../types/genericRequest.js";
+import { User } from "../../../types/user.js";
 
 export class AccountMaping {
-    static transformData(data: any): Request<account> {
+    static transformData(data: any): Request<User> {
         try {
-            const transformedData: account = {
-                email: data.email,
-                password: data.password
-            }
-            return { success: true, data: transformedData, statusCode: 200 }
+            const userData: User = {
+                            email: data.email,
+                            pssKey: data.pssKey,
+            };
+            return { success: true, data: userData, statusCode: 200 }
         } catch (error) {
             return { 
                 success: false, 

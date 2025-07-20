@@ -7,6 +7,7 @@ import { authentication } from "../../../types/authentication.js";
 import { sign } from "hono/utils/jwt/jwt";
 import { setCookie } from "hono/cookie";
 import { loginPayload } from "../../../types/payload.js";
+import { credentialVerify } from "../db/verification.js";
 
 config();
 
@@ -15,11 +16,25 @@ export const recieveCredentials = async (c: Context): Promise<Request<authentica
         const credentials = await c.req.json();
         const credentialFormatting = AccountMaping.transformData(credentials);
 
-        if (
-            credentialFormatting.data?.email !== process.env.testEmail ||
-            credentialFormatting.data?.password !== process.env.password
-        ) {
-            return { success: false, statusCode: 300, error: "Wrong Data, Check your credentials" }
+        let verification;
+
+        if (credentialFormatting.data){
+           verification = await credentialVerify(credentialFormatting.data)
+        }
+
+        if (!verification?.success) {
+            if (!verification) {
+                return {
+                    success: false,
+                    error: "Verification failed",
+                    statusCode: 401,
+                };
+            }
+            return {
+                success: verification.success,
+                error: verification.data,
+                statusCode: verification.statusCode,
+            };
         }
         else{
             const payload: loginPayload = {
