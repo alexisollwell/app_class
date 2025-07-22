@@ -8,6 +8,7 @@ import { sign } from "hono/utils/jwt/jwt";
 import { setCookie } from "hono/cookie";
 import { loginPayload } from "../../../types/payload.js";
 import { credentialVerify } from "../db/verification.js";
+import { studentIdGet } from "../db/studentIdGet.js";
 
 config();
 
@@ -43,12 +44,19 @@ export const recieveCredentials = async (c: Context): Promise<Request<authentica
             }
 
             const token = await sign(payload, process.env.secret || "")
-            setCookie(c, "token", token)
-            
+
             const tokens:authentication = {
                 token: token,
                 payload: payload
-            } 
+            }
+
+            const id = await studentIdGet(tokens);
+            if(id.data){
+                setCookie(c, "user", id.data);
+            }
+    
+            setCookie(c, "token", token);            
+
             return {success: true, statusCode: 200, data: tokens}
         }
     } catch (error) {

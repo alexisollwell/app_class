@@ -13,7 +13,6 @@ export class registerMaping {
             };
             const studentData: Student = {
                 name: data.name,
-                email: data.email,
                 phoneNumber: data.phoneNumber,
                 careerInCourse: data.careerInCourse,
                 classGroup: data.classGroup,
@@ -21,8 +20,7 @@ export class registerMaping {
                 careerModality: data.careerModality,
                 grade: data.grade,
                 studentStatus_id: data.studentStatus_id,
-                institutionalEmail: data.institutionalEmail,
-                user_id: data.user_id
+                institutionalEmail: data.institutionalEmail
             };
 
             const transformedData: registerType = {

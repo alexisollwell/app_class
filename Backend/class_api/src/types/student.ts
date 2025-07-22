@@ -1,6 +1,5 @@
 export type Student = {
     name: string;
-    email: string;
     phoneNumber: string;
     careerInCourse: string;
     classGroup: string;
