@@ -1,7 +1,7 @@
-import 'package:cesunapp/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:lottie/lottie.dart'; 
+import 'package:lottie/lottie.dart';
+import 'package:cesunapp/pages/home_page.dart';
 
 class LoadPage extends StatefulWidget {
   const LoadPage({super.key});
@@ -17,12 +17,11 @@ class _LoadPageState extends State<LoadPage> {
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     });
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,13 +34,8 @@ class _LoadPageState extends State<LoadPage> {
               width: 220,
               height: 220,
             ),
-            SizedBox(height: 32),
-            Lottie.asset(
-              'assets/jsons/loading.json',
-              width: 150,
-              height: 150,
-              fit: BoxFit.contain,
-            ),
+            const SizedBox(height: 32),
+            Lottie.asset('assets/jsons/loading.json', width: 150, height: 150),
           ],
         ),
       ),
