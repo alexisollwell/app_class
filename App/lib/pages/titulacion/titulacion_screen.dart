@@ -124,7 +124,8 @@ class _TitulacionScreenState extends State<TitulacionScreen> {
             _buildCard(
               icon: Icons.check_circle_outline,
               titulo: pasos[selectedStepIndex]['titulo'],
-              contenido: (pasos[selectedStepIndex]['contenido'] as List<String>).join('\n'),
+              contenido: (pasos[selectedStepIndex]['contenido'] as List<String>)
+                  .join('\n'),
             ),
 
             const SizedBox(height: 20),
@@ -235,11 +236,13 @@ class _TitulacionScreenState extends State<TitulacionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(titulo, style: AppTextStyles.subjectName.copyWith(fontSize: 18)),
+                Text(titulo,
+                    style: AppTextStyles.subjectName.copyWith(fontSize: 18)),
                 const SizedBox(height: 6),
                 Text(
                   contenido,
-                  style: AppTextStyles.kardexSubtitle.copyWith(color: Colors.grey[800]),
+                  style: AppTextStyles.kardexSubtitle.copyWith(
+                      color: Colors.grey[800]),
                 ),
               ],
             ),
