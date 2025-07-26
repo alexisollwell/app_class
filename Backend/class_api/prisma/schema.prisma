@@ -54,10 +54,10 @@ model Service {
   supervisorPosition      String?             @db.NVarChar(100)
   receivingUnit_id        Int?
   Documents               Documents[]
-  ReceivingUnit           ReceivingUnit?      @relation(fields: [receivingUnit_id], references: [receivingUnitId], onDelete: NoAction, onUpdate: NoAction, map: "FK__Service__receivi__440B1D61")
   ServiceType             ServiceType?        @relation(fields: [serviceType_id], references: [serviceTypeId], onDelete: NoAction, onUpdate: NoAction, map: "FK__Service__service__4222D4EF")
   ServiceStatusList       ServiceStatusList?  @relation(fields: [service_status_id], references: [serviceStatusId], onDelete: NoAction, onUpdate: NoAction, map: "FK__Service__service__4316F928")
   Student                 Student?            @relation(fields: [student_id], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "FK__Service__student__412EB0B6")
+  ReceivingUnit           ReceivingUnit?      @relation(fields: [receivingUnit_id], references: [receivingUnitId], onDelete: NoAction, onUpdate: NoAction, map: "ReceivingUnitToService")
   ServiceActivities       ServiceActivities[]
 
   @@schema("cs")
@@ -115,7 +115,7 @@ model User {
   userId   Int       @id(map: "PK_cs.User") @default(autoincrement())
   userName String    @db.VarChar(50)
   pssKey   String    @db.NVarChar(100)
-  email    String    @db.NVarChar(100) @unique
+  email    String    @db.NVarChar(100)
   Student  Student[]
 
   @@schema("cs")

@@ -5,7 +5,7 @@ import { Request } from "../../../types/genericRequest.js";
 export async function studentIdGet(keys: authentication): Promise<Request<string>> {
     const connection = new PrismaClient();
     try {
-        const query = await connection.user.findUnique({
+        const query = await connection.user.findFirst({
             where:
             {
                 email: keys.payload.email

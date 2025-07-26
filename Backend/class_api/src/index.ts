@@ -13,9 +13,9 @@ app.get('/', (c) => {
 })
 
 // Ruta principal para solicitudes relacionadas con actividades de servicio o prácticas.
-app.route('/auth', auth)
-app.route('/activities', activityRoutes)
-app.route('/service', servicesRoutes)
+app.route('/auth', auth);
+app.route('/activities', activityRoutes);
+app.route('/service', servicesRoutes);
 
 
 serve({

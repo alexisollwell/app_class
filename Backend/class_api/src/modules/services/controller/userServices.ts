@@ -3,13 +3,14 @@ import { Context } from "hono";
 import { Request } from "../../../types/genericRequest.js";
 import { serviceProgressView } from "../../../types/serviceProgress.js";
 import { servicesPerUser } from "../db/servicesPerUser.js";
+import { getCookie } from "hono/cookie";
 
 export async function userServices(c: Context): Promise<Request<serviceProgressView[]>> {
     const connection = new PrismaClient();
     let querie;
 
     // Obtenemos el serviceId del contexto, que debe haber sido establecido en una etapa anterior del flujo
-    const userId = c.header('userId');
+    const userId = getCookie(c, 'user');
     
     try {
 
