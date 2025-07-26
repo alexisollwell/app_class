@@ -1,52 +1,41 @@
-import 'package:cesunapp/main.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'login_page.dart';
+import 'home_page.dart';
 
 class LoadPage extends StatefulWidget {
-  const LoadPage({Key? key}) : super(key: key);
+  const LoadPage({super.key});
 
   @override
-  _LoadPageState createState() => _LoadPageState();
+  State<LoadPage> createState() => _LoadPageState();
 }
 
 class _LoadPageState extends State<LoadPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    });
+    _checkLogin();
   }
-  
+
+  Future<void> _checkLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo de CESUN
-              Image.asset(
-                'assets/images/cesun_logo.png',
-                width: 300,
-                height: 300,
-                fit: BoxFit.contain,
-              ),
-              SizedBox(height: 32), // Espacio entre logo y animación
-              // Animación de carga
-              SizedBox(
-                width: 150,
-                height: 150,
-                child: Lottie.asset('assets/jsons/loading.json'),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }
