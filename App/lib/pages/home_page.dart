@@ -1,3 +1,4 @@
+import 'package:cesunapp/Pages/student_page.dart';
 import 'package:flutter/material.dart';
 import '/pages/kardex/kardex_screen.dart';
 import '/pages/servicios/servicio_comunitario_screen.dart';
@@ -109,7 +110,21 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('App CESUN')),
+      appBar: AppBar(
+        title: const Text('App CESUN'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle),
+            tooltip: 'Perfil',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const StudentPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: body,
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
