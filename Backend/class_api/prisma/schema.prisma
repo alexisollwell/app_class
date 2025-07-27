@@ -147,7 +147,8 @@ view ServiceProgressView {
   institutionalEmail String? @db.NVarChar(100)
   type               String? @db.VarChar(100)
   totalHours         Int?
-  serviceProgress    Int?
+  serviceProgress    Float?
+  quantityToComplete Int?
 
   @@schema("cs")
 }

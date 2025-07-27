@@ -11,7 +11,11 @@ export async function uploadActivitiesRequest(c: Context): Promise<Request<strin
     let querie;
 
     // Obtenemos el serviceId del contexto, que debe haber sido establecido en una etapa anterior del flujo
-    const service_id = c.header('serviceId');
+    let service_id = c.req.header('serviceId');
+        
+    if (service_id === null) {
+        return {success: false, error: 'No serviceId Provided. Check your headers', statusCode: 401}
+    }
     const activityList: Activity[] = [];
 
     // Mapeamos las actividades recibidas.
@@ -22,11 +26,14 @@ export async function uploadActivitiesRequest(c: Context): Promise<Request<strin
         for (const activity of activities) {
             const mappedEntry = await activityMapping.transformData(activity);
 
-            if (!mappedEntry.success && mappedEntry.data) {
+            if (mappedEntry.success && mappedEntry.data) {
                 activityList.push(mappedEntry.data);
             }
         }
 
+        if (activityList.length === 0){
+            return {success: false, error: 'Body is null. Check your body format', statusCode: 401}
+        }
         // Subimos las actividades realizadas por el usuario a la db.
         querie = await uploadActivities(activityList, connection, id); 
         return querie

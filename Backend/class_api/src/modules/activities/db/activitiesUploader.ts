@@ -26,7 +26,7 @@ export async function uploadActivities(
       )
     );
 
-    if (createdActivities.length === 0) {
+    if (!createdActivities) {
         return {
             success: false,
             error: "No activities were submited.",
@@ -37,6 +37,10 @@ export async function uploadActivities(
     return {success: true, data: "Activities uploaded successfully", statusCode: 200};
   } catch (error) {
     console.error("Error en uploadActivities:", error);
-    throw error;
+    return {
+      success: false,
+      error: "An error occurred while uploading the service or unit.",
+      statusCode: 500,
+    };
   }
 }

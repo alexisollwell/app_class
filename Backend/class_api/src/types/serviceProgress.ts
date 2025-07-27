@@ -4,6 +4,7 @@ export type serviceProgressView = {
     name: string;
     institutionalEmail: string;
     type: string;
-    totalHours: number
-    serviceProgress: number
+    totalHours: number;
+    serviceProgress: number;
+    quantityToComplete: number;
 }

@@ -1,9 +1,9 @@
 USE [CollegeService]
 GO
-/****** Object:  Schema [cs]    Script Date: 7/19/2025 5:44:03 PM ******/
+/****** Object:  Schema [cs]    Script Date: 7/26/2025 5:35:50 PM ******/
 CREATE SCHEMA [cs]
 GO
-/****** Object:  Table [cs].[ServiceActivities]    Script Date: 7/19/2025 5:44:03 PM ******/
+/****** Object:  Table [cs].[ServiceActivities]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,18 +20,18 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  View [cs].[TotalActivityHours]    Script Date: 7/19/2025 5:44:03 PM ******/
+/****** Object:  View [cs].[TotalActivityHours]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [cs].[TotalActivityHours]
 AS
-SELECT MAX(service_id) AS service_id, SUM(hours) AS totalHours
+SELECT service_id, SUM(hours) AS totalHours
 FROM   cs.ServiceActivities
-GROUP BY service_id, serviceActivitieId
+GROUP BY service_id
 GO
-/****** Object:  Table [cs].[ServiceType]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  Table [cs].[ServiceType]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -47,7 +47,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [cs].[Student]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  Table [cs].[Student]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -55,7 +55,6 @@ GO
 CREATE TABLE [cs].[Student](
 	[studentId] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](100) NULL,
-	[email] [nvarchar](100) NULL,
 	[phoneNumber] [varchar](50) NULL,
 	[careerInCourse] [nvarchar](100) NULL,
 	[classGroup] [nvarchar](50) NULL,
@@ -64,13 +63,14 @@ CREATE TABLE [cs].[Student](
 	[grade] [int] NULL,
 	[studentStatus_id] [int] NULL,
 	[institutionalEmail] [nvarchar](100) NULL,
+	[user_id] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[studentId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [cs].[Service]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  Table [cs].[Service]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -92,20 +92,21 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  View [cs].[ServiceProgressView]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  View [cs].[ServiceProgressView]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [cs].[ServiceProgressView]
 AS
-SELECT sv.serviceId, s.studentId, s.name, s.institutionalEmail, st.type, tah.totalHours, tah.totalHours / st.quantityToComplete * 100 AS serviceProgress
+SELECT sv.serviceId, s.studentId, s.name, s.institutionalEmail, st.type, tah.totalHours, CASE WHEN st.quantityToComplete = 0 THEN 0 ELSE CASE WHEN (CAST(tah.totalHours AS FLOAT) / st.quantityToComplete) * 100 > 100 THEN 100 ELSE (CAST(tah.totalHours AS FLOAT) 
+             / st.quantityToComplete) * 100 END END AS serviceProgress, st.quantityToComplete
 FROM   cs.Student AS s INNER JOIN
              cs.Service AS sv ON sv.student_id = s.studentId INNER JOIN
              cs.ServiceType AS st ON st.serviceTypeId = sv.serviceType_id INNER JOIN
              cs.TotalActivityHours AS tah ON tah.service_id = sv.serviceId
 GO
-/****** Object:  View [cs].[ServiceActivitiesByUser]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  View [cs].[ServiceActivitiesByUser]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -121,7 +122,7 @@ FROM [CollegeService].[cs].[ServiceActivities] sa
 LEFT JOIN cs.[Service] AS s ON s.serviceId = sa.service_id
 LEFT JOIN cs.Student AS st ON s.student_id = st.studentId
 GO
-/****** Object:  Table [cs].[Documents]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  Table [cs].[Documents]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -138,7 +139,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [cs].[DocumentStatusList]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  Table [cs].[DocumentStatusList]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -153,7 +154,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [cs].[ReceivingUnit]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  Table [cs].[ReceivingUnit]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -171,7 +172,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [cs].[ServiceStatusList]    Script Date: 7/19/2025 5:44:04 PM ******/
+/****** Object:  Table [cs].[ServiceStatusList]    Script Date: 7/26/2025 5:35:50 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -186,14 +187,27 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
+/****** Object:  Table [cs].[User]    Script Date: 7/26/2025 5:35:50 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [cs].[User](
+	[userId] [int] IDENTITY(1,1) NOT NULL,
+	[userName] [varchar](50) NOT NULL,
+	[pssKey] [nvarchar](100) NOT NULL,
+	[email] [nvarchar](100) NOT NULL,
+ CONSTRAINT [PK_cs.User] PRIMARY KEY CLUSTERED 
+(
+	[userId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
 ALTER TABLE [cs].[Documents]  WITH CHECK ADD FOREIGN KEY([docStatus_id])
 REFERENCES [cs].[DocumentStatusList] ([docStatusId])
 GO
 ALTER TABLE [cs].[Documents]  WITH CHECK ADD FOREIGN KEY([service_id])
 REFERENCES [cs].[Service] ([serviceId])
-GO
-ALTER TABLE [cs].[Service]  WITH CHECK ADD FOREIGN KEY([receivingUnit_id])
-REFERENCES [cs].[ReceivingUnit] ([receivingUnitId])
 GO
 ALTER TABLE [cs].[Service]  WITH CHECK ADD FOREIGN KEY([serviceType_id])
 REFERENCES [cs].[ServiceType] ([serviceTypeId])
@@ -204,8 +218,18 @@ GO
 ALTER TABLE [cs].[Service]  WITH CHECK ADD FOREIGN KEY([student_id])
 REFERENCES [cs].[Student] ([studentId])
 GO
+ALTER TABLE [cs].[Service]  WITH CHECK ADD  CONSTRAINT [ReceivingUnitToService] FOREIGN KEY([receivingUnit_id])
+REFERENCES [cs].[ReceivingUnit] ([receivingUnitId])
+GO
+ALTER TABLE [cs].[Service] CHECK CONSTRAINT [ReceivingUnitToService]
+GO
 ALTER TABLE [cs].[ServiceActivities]  WITH CHECK ADD FOREIGN KEY([service_id])
 REFERENCES [cs].[Service] ([serviceId])
+GO
+ALTER TABLE [cs].[Student]  WITH CHECK ADD  CONSTRAINT [StudentToUser] FOREIGN KEY([user_id])
+REFERENCES [cs].[User] ([userId])
+GO
+ALTER TABLE [cs].[Student] CHECK CONSTRAINT [StudentToUser]
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
