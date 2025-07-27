@@ -48,7 +48,11 @@ class _HomePageState extends State<HomePage> {
     TitulacionScreen(),
   ];
 
-  const StudentLifeTabs({super.key});
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
