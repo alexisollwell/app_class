@@ -5,6 +5,8 @@ import '/pages/servicios/servicio_comunitario_screen.dart';
 import '/pages/servicios/servicio_social_screen.dart';
 import '/pages/servicios/practicas_profesionales_screen.dart';
 import '/pages/titulacion/titulacion_screen.dart';
+import '/pages/calificaciones/calificaciones_screen.dart';
+import '/pages/horario/horario_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,9 +27,9 @@ class _HomePageState extends State<HomePage> {
   ];
 
   static final List<Widget> _careerPages = <Widget>[
-    Center(child: Text('Horario', style: TextStyle(fontSize: 22))),
-    Center(child: Text('Calificaciones', style: TextStyle(fontSize: 22))),
-    KardexScreen(), // Aquí se muestra la pantalla de Kardex
+    HorarioScreen(),
+    CalificacionesScreen(),
+    KardexScreen(),
   ];
 
   static const List<Tab> _studentLifeTabs = [
