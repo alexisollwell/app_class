@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:cesunapp/pages/student.dart'; // 👈 pantalla de perfil
+import 'package:cesunapp/pages/student_page.dart'; // 👈 pantalla de perfil
 
 class LoadPage extends StatefulWidget {
   const LoadPage({super.key});
