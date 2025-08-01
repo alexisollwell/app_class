@@ -123,6 +123,7 @@ model User {
 
 view ServiceActivitiesByUser {
   serviceActivitieId Int       @unique
+  service_id         Int?
   student_id         Int?
   description        String?   @db.NVarChar(Max)
   postingDate        DateTime? @db.Date
@@ -144,6 +145,10 @@ view ServiceProgressView {
   serviceId          Int     @unique
   studentId          Int
   name               String? @db.NVarChar(100)
+  careerInCourse     String? @db.NVarChar(100)
+  institutionName    String? @db.NVarChar(255)
+  supervisorName     String? @db.NVarChar(100)
+  phoneNumber        String? @db.VarChar(50)
   institutionalEmail String? @db.NVarChar(100)
   type               String? @db.VarChar(100)
   totalHours         Int?
