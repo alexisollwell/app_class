@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { activityRoutes } from './routes/activityRoutes.js'
 import { servicesRoutes } from './routes/servicesRoutes.js'
 import { authMiddleware } from './middlewares/verifying.js'
-import { auth } from './modules/authentication/routes/login.js'
+import { auth } from './routes/login.js'
 
 
 const app = new Hono()
