@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cesunapp/Pages/load_page.dart';
 
 class StudentPage extends StatefulWidget {
   const StudentPage({super.key});
