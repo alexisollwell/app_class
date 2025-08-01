@@ -5,12 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fb845be-032a-4f87-9e72-8f51c92e19bd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/App/assets/pdfs/horario.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App/lib/pages/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/App/lib/pages/home_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App/lib/pages/load_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/App/lib/pages/load_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/App/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/lib/Pages/horario/horario_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/App/lib/Pages/horario/horario_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/App/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/App/linux/flutter/generated_plugins.cmake" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/App/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/App/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/App/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -68,6 +70,11 @@
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\rafal\OneDrive\Documentos\GitHub\app_class\App\assets\pdfs" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter" temporary="true" nameIsGenerated="true">
       <option name="filePath" value="$PROJECT_DIR$/App/lib/main.dart" />
