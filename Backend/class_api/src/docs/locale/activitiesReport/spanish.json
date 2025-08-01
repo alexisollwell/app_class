@@ -1,0 +1,34 @@
+{
+    "header": {
+        "title": "REPORTE DE ACTIVIDADES",
+        "titleInfo": "Vinculacion y Seguimiento a Egresados"
+    },
+    "activityInfoHeader": {
+        "socialService": "Servicio Social: ",
+        "profesionalPractices": "Practicas Profesionales: ",
+        "xMark": "Marcar con X la actividad a realizar",
+        "city": "Tijuana, B.C., a",
+        "preposition": "de"
+    },
+    "middleStudentInfo": {
+        "entityName": "Nombre de la entidad",
+        "supervisorName": "Nombre del supervisor",
+        "studentName": "Nombre del Alumno",
+        "phoneNumber": "Telefono",
+        "email": "Correo",
+        "career": "Carrera"
+    },
+    "tableText": {
+        "programInfo": "INFÓRMACION SOBRE EL PROGRAMA",
+        "date": "FECHA",
+        "N": "N°",
+        "activities": "ACTIVIDADES",
+        "hours": "HOURS",
+        "totalHours": "SUMA TOTAL DE HORAS"
+    },
+    "signature": {
+        "institutionSignature": "Firma y/o Sello de la Institución",
+        "studentSignature": "Firma del Alumno",
+        "cesunSignature": "Firma y Sello de Cesun"
+    }
+}

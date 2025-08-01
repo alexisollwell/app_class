@@ -10,7 +10,9 @@
     "@hono/node-server": "^1.15.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.0",
-    "hono": "^4.8.4"
+    "hono": "^4.8.4",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2"
   },
   "devDependencies": {
     "@prisma/client": "^6.11.1",
