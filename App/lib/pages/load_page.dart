@@ -1,8 +1,7 @@
+import 'package:cesunapp/Pages/home_page.dart';
+import 'package:cesunapp/Pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lottie/lottie.dart';
-import 'login_page.dart';
-import 'home_page.dart';
 
 class LoadPage extends StatefulWidget {
   const LoadPage({super.key});
@@ -11,30 +10,50 @@ class LoadPage extends StatefulWidget {
   State<LoadPage> createState() => _LoadPageState();
 }
 
-class _LoadPageState extends State<LoadPage> {
+class _LoadPageState extends State<LoadPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
+
   @override
   void initState() {
     super.initState();
-    _startLoading();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    );
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    _controller.forward();
+    _checkLogin();
   }
 
-  Future<void> _startLoading() async {
-    await Future.delayed(const Duration(seconds: 2));
-    _checkLogin();
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _checkLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    
 
     if (isLoggedIn) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomePage()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
     } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginPage()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginPage()));
     }
   }
 
@@ -45,18 +64,21 @@ class _LoadPageState extends State<LoadPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/images/cesun_logo.png',
-              width: 250,
-              height: 250,
+            // Logo de CESUN animado
+            FadeTransition(
+              opacity: _opacityAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Image.asset(
+                  'assets/images/cesun_logo.png',
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
             const SizedBox(height: 24),
-            Lottie.asset(
-              'assets/jsons/loading.json',
-              width: 150,
-              height: 150,
-              repeat: true,
-            ),
+            const CircularProgressIndicator(),
           ],
         ),
       ),
