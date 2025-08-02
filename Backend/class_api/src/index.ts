@@ -4,6 +4,7 @@ import { activityRoutes } from './routes/activityRoutes.js'
 import { servicesRoutes } from './routes/servicesRoutes.js'
 import { authMiddleware } from './middlewares/verifying.js'
 import { auth } from './routes/login.js'
+import { profile } from './routes/profileRoutes.js'
 
 
 const app = new Hono()
@@ -16,7 +17,7 @@ app.get('/', (c) => {
 app.route('/auth', auth);
 app.route('/activities', activityRoutes);
 app.route('/service', servicesRoutes);
-
+app.route('/profile', profile);
 
 serve({
   fetch: app.fetch,

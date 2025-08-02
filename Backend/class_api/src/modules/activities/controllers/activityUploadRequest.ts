@@ -8,6 +8,7 @@ import { Request } from "../../../types/genericRequest.js";
 export async function uploadActivitiesRequest(c: Context): Promise<Request<string>> {
     const connection = new PrismaClient();
     const activities = await c.get('parsedBody');
+    
     let querie;
 
     // Obtenemos el serviceId del contexto, que debe haber sido establecido en una etapa anterior del flujo
