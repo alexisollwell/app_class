@@ -20,6 +20,10 @@ dependencies:
   dio: ^5.4.3
   cookie_jar: ^4.0.8
   dio_cookie_manager: ^3.1.0
+  syncfusion_flutter_pdfviewer: ^30.1.41
+  permission_handler: ^12.0.1
+  path: ^1.9.0
+  open_filex: ^4.7.0
 
 dev_dependencies:
   flutter_test:
@@ -34,7 +38,4 @@ flutter:
 
     - assets/jsons/
     - assets/images/
-    - assets/pdfs/solicitud.pdf
-    - assets/pdfs/reporte.pdf
-    - assets/pdfs/unidades.pdf
-    - assets/pdfs/guia.pdf
+    - assets/pdfs/
