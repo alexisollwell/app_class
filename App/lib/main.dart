@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:cesunapp/pages/load_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  // Use dotenv para cargar variables de entorno del .env
+  await dotenv.load(fileName: ".env");
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -28,6 +32,18 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ).copyWith(secondary: Colors.blueAccent),
       ),
+
+      // 🌐 Agregado para soporte de localización y evitar errores
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('es', 'ES'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
       home: const LoadPage(),
     );
   }

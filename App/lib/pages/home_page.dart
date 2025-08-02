@@ -1,3 +1,4 @@
+import 'package:cesunapp/Pages/formulario/formulario_actividad_servicio_social.dart';
 import 'package:cesunapp/Pages/student_page.dart';
 import 'package:flutter/material.dart';
 import '/pages/kardex/kardex_screen.dart';
@@ -5,6 +6,8 @@ import '/pages/servicios/servicio_comunitario_screen.dart';
 import '/pages/servicios/servicio_social_screen.dart';
 import '/pages/servicios/practicas_profesionales_screen.dart';
 import '/pages/titulacion/titulacion_screen.dart';
+import '/pages/calificaciones/calificaciones_screen.dart';
+import '/pages/horario/horario_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,14 +23,13 @@ class _HomePageState extends State<HomePage> {
 
   static const List<Tab> _careerTabs = [
     Tab(icon: Icon(Icons.schedule), text: 'Horario'),
-    Tab(icon: Icon(Icons.grade), text: 'Calificaciones'),
     Tab(icon: Icon(Icons.list_alt), text: 'Kardex'),
   ];
 
   static final List<Widget> _careerPages = <Widget>[
-    Center(child: Text('Horario', style: TextStyle(fontSize: 22))),
-    Center(child: Text('Calificaciones', style: TextStyle(fontSize: 22))),
-    KardexScreen(), // Aquí se muestra la pantalla de Kardex
+    HorarioScreen(),
+    CalificacionesScreen(),
+    KardexScreen(),
   ];
 
   static const List<Tab> _studentLifeTabs = [
@@ -56,58 +58,81 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body;
-    if (_selectedIndex == 0) {
-      body = DefaultTabController(
-        length: _careerTabs.length,
-        initialIndex: _careerIndex,
-        child: Column(
-          children: [
-            Container(
-              color: Colors.blue[50],
-              child: TabBar(
-                tabs: _careerTabs,
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.black54,
-                indicatorColor: Colors.blue,
-                onTap: (index) {
-                  setState(() {
-                    _careerIndex = index;
-                  });
-                },
-              ),
+    Widget mainBody;
+  if (_selectedIndex == 0) {
+    mainBody = DefaultTabController(
+      length: _careerTabs.length,
+      initialIndex: _careerIndex,
+      child: Column(
+        children: [
+          Container(
+            color: Colors.blue[50],
+            child: TabBar(
+              tabs: _careerTabs,
+              labelColor: Colors.blue,
+              unselectedLabelColor: Colors.black54,
+              indicatorColor: Colors.blue,
+              onTap: (index) {
+                setState(() {
+                  _careerIndex = index;
+                });
+              },
             ),
-            Expanded(child: _careerPages[_careerIndex]),
-          ],
-        ),
-      );
-    } else if (_selectedIndex == 1) {
-      body = DefaultTabController(
-        length: _studentLifeTabs.length,
-        initialIndex: _studentLifeIndex,
-        child: Column(
-          children: [
-            Container(
-              color: Colors.blueGrey[50],
-              child: TabBar(
-                tabs: _studentLifeTabs,
-                labelColor: Colors.blueAccent,
-                unselectedLabelColor: Colors.black54,
-                indicatorColor: Colors.blueAccent,
-                onTap: (index) {
-                  setState(() {
-                    _studentLifeIndex = index;
-                  });
-                },
-              ),
+          ),
+          Expanded(child: _careerPages[_careerIndex]),
+        ],
+      ),
+    );
+  } else if (_selectedIndex == 1) {
+    mainBody = DefaultTabController(
+      length: _studentLifeTabs.length,
+      initialIndex: _studentLifeIndex,
+      child: Column(
+        children: [
+          Container(
+            color: Colors.blueGrey[50],
+            child: TabBar(
+              tabs: _studentLifeTabs,
+              labelColor: Colors.blueAccent,
+              unselectedLabelColor: Colors.black54,
+              indicatorColor: Colors.blueAccent,
+              onTap: (index) {
+                setState(() {
+                  _studentLifeIndex = index;
+                });
+              },
             ),
-            Expanded(child: _studentLifePages[_studentLifeIndex]),
-          ],
+          ),
+          Expanded(child: _studentLifePages[_studentLifeIndex]),
+        ],
+      ),
+    );
+  } else {
+    mainBody = _pages[_selectedIndex];
+  }
+
+  // Usar Stack para superponer el botón solo en Vida estudiantil
+  Widget body = Stack(
+    children: [
+      mainBody,
+      if (_selectedIndex == 1)
+        Positioned(
+          bottom: 10, // Ajusta según el espacio del BottomNavigationBar
+          right: 10,
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FormularioActividadServicioSocial()),
+              );
+            },
+            icon: const Icon(Icons.add_box),
+            label: const Text('Actividad'),
+            backgroundColor: Colors.blueAccent,
+          ),
         ),
-      );
-    } else {
-      body = _pages[_selectedIndex];
-    }
+    ],
+  );
 
     return Scaffold(
       appBar: AppBar(
