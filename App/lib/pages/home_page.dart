@@ -6,7 +6,6 @@ import '/pages/servicios/servicio_comunitario_screen.dart';
 import '/pages/servicios/servicio_social_screen.dart';
 import '/pages/servicios/practicas_profesionales_screen.dart';
 import '/pages/titulacion/titulacion_screen.dart';
-import '/pages/calificaciones/calificaciones_screen.dart';
 import '/pages/horario/horario_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,7 +27,6 @@ class _HomePageState extends State<HomePage> {
 
   static final List<Widget> _careerPages = <Widget>[
     HorarioScreen(),
-    CalificacionesScreen(),
     KardexScreen(),
   ];
 
@@ -144,7 +142,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const StudentPage()),
+                MaterialPageRoute(builder: (context) => const PerfilUsuarioScreen()),
               );
             },
           ),

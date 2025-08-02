@@ -1,628 +1,599 @@
-import 'package:cesunapp/pages/load_page.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class StudentPage extends StatefulWidget {
-  const StudentPage({super.key});
+class PerfilUsuarioScreen extends StatefulWidget {
+  const PerfilUsuarioScreen({super.key});
 
   @override
-  State<StudentPage> createState() => _StudentPageState();
+  State<PerfilUsuarioScreen> createState() => _PerfilUsuarioScreenState();
 }
 
-class _StudentPageState extends State<StudentPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _PerfilUsuarioScreenState extends State<PerfilUsuarioScreen> {
+  bool isEditing = false;
+  bool showAddressSection = false;
   final _formKey = GlobalKey<FormState>();
+  
+  // Lista de tipos sanguíneos disponibles
+  final List<String> tiposSanguineos = [
+    'A+', 'A-', 
+    'B+', 'B-', 
+    'AB+', 'AB-', 
+    'O+', 'O-'
+  ];
+  
+  // Datos principales
+  final Map<String, String> _originalData = {
+    'matricula': '22020080',
+    'nombre': 'ALVAREZ RODRIGUEZ ESMERALDA',
+    'periodo': '2022-2',
+    'cuatrimestre': '10',
+    'carrera': 'ING. DES. SOFTWARE',
+    'claveCarrera': '10IDESVA',
+    'materias': '5',
+    'modalidad': 'EJECUTIVA',
+    'estatus': 'VIGENTE',
+    'tipoSanguineo': 'A+',
+    'alergias': 'Ninguna',
+    'telefono': '6631188128',
+    'email': 'esmeralda@gmail.com',
+  };
 
-  Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoadPage()),
-      (route) => false,
-    );
-  }
-
-  // Controladores para Datos Generales
-  final matriculaController = TextEditingController();
-  final nombreController = TextEditingController();
-  final fechaNacimientoController = TextEditingController();
-  final generoController = TextEditingController();
-  final emailController = TextEditingController();
-  final curpController = TextEditingController();
-  final apellidoPController = TextEditingController();
-  final apellidoMController = TextEditingController();
-  final paisNacimientoController = TextEditingController();
-  final estadoNacimientoController = TextEditingController();
-  final estadoCivilController = TextEditingController();
-  final telefonoController = TextEditingController();
-
-  // Controladores para Datos Escolares
-  final campusController = TextEditingController();
-  final programaController = TextEditingController();
-  final modalidadController = TextEditingController();
-  final submodalidadController = TextEditingController();
-  final planEstudiosController = TextEditingController();
-  final grupoController = TextEditingController();
-  final periodoController = TextEditingController();
-
-  // Controladores para Dirección
-  final calleController = TextEditingController();
-  final numExtController = TextEditingController();
-  final cpController = TextEditingController();
-  final paisController = TextEditingController();
-  final estadoController = TextEditingController();
-  final municipioController = TextEditingController();
-  final localidadController = TextEditingController();
-
-  // Controladores para Referencias Personales
-  final ref1NombreController = TextEditingController();
-  final ref1ApellidoPController = TextEditingController();
-  final ref1ApellidoMController = TextEditingController();
-  final ref1ParentescoController = TextEditingController();
-  final ref1TelefonoController = TextEditingController();
-  final ref1EmailController = TextEditingController();
-
-  final ref2NombreController = TextEditingController();
-  final ref2ApellidoPController = TextEditingController();
-  final ref2ParentescoController = TextEditingController();
-  final ref2TelefonoController = TextEditingController();
-
-  final ref3NombreController = TextEditingController();
-  final ref3ApellidoPController = TextEditingController();
-  final ref3ApellidoMController = TextEditingController();
-  final ref3ParentescoController = TextEditingController();
-
-  // Controladores para Datos Laborales
-  final trabajaController = TextEditingController();
-  final tipoEmpresaController = TextEditingController();
-  final anioInicioController = TextEditingController();
-  final anioFinController = TextEditingController();
-  final horarioLaboralController = TextEditingController();
-  final puestoController = TextEditingController();
-  final horasSemanalesController = TextEditingController();
-  final relacionCarreraController = TextEditingController();
-
-  // Controladores para Datos Médicos
-  final tipoSanguineoController = TextEditingController();
-  final rhController = TextEditingController();
-  final alergiasController = TextEditingController();
-  final seguroController = TextEditingController();
-  final intervencionesController = TextEditingController();
-  final indicacionesController = TextEditingController();
-  final pesoController = TextEditingController();
-  final estaturaController = TextEditingController();
+  // Datos de dirección
+  final Map<String, String> _originalAddress = {
+    'calle': '',
+    'numExt': '',
+    'numInt': '',
+    'cp': '',
+    'colonia': '',
+    'pais': '',
+    'estado': '',
+    'municipio': '',
+    'localidad': '',
+  };
+  
+  late Map<String, String> _currentData;
+  late Map<String, String> _currentAddress;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this);
+    _currentData = Map.from(_originalData);
+    _currentAddress = Map.from(_originalAddress);
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  void _guardarDatos() {
+    if (_formKey.currentState!.validate()) {
+      // Actualizar datos originales con los cambios
+      _originalData.addAll(_currentData);
+      
+      // Solo actualizar campos de dirección que no estén vacíos
+      _currentAddress.forEach((key, value) {
+        if (value.isNotEmpty) {
+          _originalAddress[key] = value;
+        }
+      });
+      
+      setState(() {
+        isEditing = false;
+        showAddressSection = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Datos guardados correctamente"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+
+  void _cancelarEdicion() {
+    setState(() {
+      isEditing = false;
+      showAddressSection = false;
+      // Restaurar valores originales
+      _currentData = Map.from(_originalData);
+      _currentAddress = Map.from(_originalAddress);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Información del Alumno'),
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          tabs: const [
-            Tab(text: 'Datos Generales'),
-            Tab(text: 'Datos Escolares'),
-            Tab(text: 'Dirección'),
-            Tab(text: 'Referencias'),
-            Tab(text: 'Datos Laborales'),
-            Tab(text: 'Datos Médicos'),
-          ],
-        ),
+        title: const Text('Perfil del Alumno', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue[800],
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Cerrar sesión',
-            onPressed: _logout,
-          ),
+          if (!isEditing)
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  isEditing = true;
+                });
+              },
+            ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildHeaderCard(),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildDatosGenerales(),
-                  _buildDatosEscolares(),
-                  _buildDireccion(),
-                  _buildReferenciasPersonales(),
-                  _buildDatosLaborales(),
-                  _buildDatosMedicos(),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderCard() {
-    return Card(
-      margin: const EdgeInsets.all(12),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage('assets/images/usuario.png'),
-              backgroundColor: Colors.transparent,
-            ),
-            const SizedBox(height: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "22020080",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Center(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // Avatar
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.withOpacity(0.3),
+                        blurRadius: 10,
+                        spreadRadius: 3,
+                      )
+                    ],
+                  ),
+                  child: const CircleAvatar(
+                    radius: 60,
+                    backgroundImage: AssetImage('assets/images/usuario.png'),
+                    backgroundColor: Colors.transparent,
+                  ),
                 ),
-                SizedBox(height: 4),
-                Text("ALVAREZ RODRIGUEZ ESMERALDA"),
-                SizedBox(height: 4),
-                Text("2022-2 / CUATRIMESTRE 10"),
-                SizedBox(height: 4),
-                Text("ING. DES. SOFTWARE (10IDESVA)"),
-                SizedBox(height: 4),
-                Text("No. Materias: 5 - EJECUTIVA"),
-                SizedBox(height: 4),
-                Text("Estatus: VIGENTE"),
+                const SizedBox(height: 20),
+                
+                isEditing ? _buildEditForm() : _buildInfoDisplay(),
+                
+                if (isEditing) ...[
+                  const SizedBox(height: 20),
+                  
+                  // Botón para mostrar/ocultar dirección
+                  OutlinedButton.icon(
+                    icon: Icon(showAddressSection ? Icons.arrow_drop_up : Icons.arrow_drop_down),
+                    label: Text(showAddressSection ? 'Ocultar dirección' : 'Agregar dirección'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.blue[800],
+                      side: BorderSide(color: Colors.blue[800]!),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        showAddressSection = !showAddressSection;
+                      });
+                    },
+                  ),
+                  
+                  if (showAddressSection) _buildAddressForm(),
+                  
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _cancelarEdicion,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[600],
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text('Cancelar', style: TextStyle(color: Colors.white)),
+                      ),
+                      const SizedBox(width: 20),
+                      ElevatedButton(
+                        onPressed: _guardarDatos,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[800],
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text('Guardar', style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDatosGenerales() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildValidatedInput(
-            "Matrícula*",
-            matriculaController,
-            isRequired: true,
-            isAlphanumeric: true,
+  Widget _buildInfoDisplay() {
+    final hasAddressData = _currentAddress.entries.any((entry) => entry.value.isNotEmpty);
+    
+    return Column(
+      children: [
+        // Tarjeta de información académica
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.blue[100]!),
           ),
-          _buildValidatedInput(
-            "Nombre*",
-            nombreController,
-            isRequired: true,
-            isName: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('INFORMACIÓN ACADÉMICA', 
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+              const SizedBox(height: 15),
+              _buildInfoRow(Icons.badge, 'Matrícula', _currentData['matricula']!),
+              _buildInfoRow(Icons.person, 'Nombre', _currentData['nombre']!),
+              _buildInfoRow(Icons.school, 'Carrera', '${_currentData['carrera']} (${_currentData['claveCarrera']})'),
+              _buildInfoRow(Icons.calendar_today, 'Periodo', '${_currentData['periodo']} - Cuatrimestre ${_currentData['cuatrimestre']}'),
+              _buildInfoRow(Icons.library_books, 'Materias', '${_currentData['materias']} (${_currentData['modalidad']})'),
+              _buildInfoRow(Icons.verified, 'Estatus', _currentData['estatus']!,
+                isStatus: _currentData['estatus'] == 'VIGENTE'),
+            ],
           ),
-          _buildValidatedInput(
-            "Apellido Paterno*",
-            apellidoPController,
-            isRequired: true,
-            isName: true,
+        ),
+        
+        const SizedBox(height: 20),
+        
+        // Tarjeta de datos personales
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.blue[100]!),
           ),
-          _buildValidatedInput(
-            "Apellido Materno",
-            apellidoMController,
-            isName: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('DATOS PERSONALES', 
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+              const SizedBox(height: 15),
+              _buildInfoRow(Icons.phone, 'Teléfono', _currentData['telefono']!),
+              _buildInfoRow(Icons.email, 'Email', _currentData['email']!),
+              _buildInfoRow(Icons.bloodtype, 'Tipo Sanguíneo', _currentData['tipoSanguineo']!),
+              _buildInfoRow(Icons.medical_services, 'Alergias', _currentData['alergias']!),
+            ],
           ),
-          _buildValidatedInput(
-            "Fecha Nacimiento*",
-            fechaNacimientoController,
-            isRequired: true,
-            isDate: true,
+        ),
+        
+        // Mostrar dirección solo si hay datos
+        if (hasAddressData) ...[
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.blue[100]!),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('DIRECCIÓN', 
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+                const SizedBox(height: 15),
+                if (_currentAddress['calle']!.isNotEmpty) 
+                  _buildInfoRow(Icons.home, 'Calle', '${_currentAddress['calle']} ${_currentAddress['numExt']} ${_currentAddress['numInt']!.isNotEmpty ? 'Int. ${_currentAddress['numInt']}' : ''}'),
+                if (_currentAddress['colonia']!.isNotEmpty) 
+                  _buildInfoRow(Icons.location_city, 'Colonia', _currentAddress['colonia']!),
+                if (_currentAddress['cp']!.isNotEmpty) 
+                  _buildInfoRow(Icons.markunread_mailbox, 'Código Postal', _currentAddress['cp']!),
+                if (_currentAddress['municipio']!.isNotEmpty) 
+                  _buildInfoRow(Icons.location_on, 'Municipio', _currentAddress['municipio']!),
+                if (_currentAddress['estado']!.isNotEmpty) 
+                  _buildInfoRow(Icons.map, 'Estado', _currentAddress['estado']!),
+                if (_currentAddress['pais']!.isNotEmpty) 
+                  _buildInfoRow(Icons.public, 'País', _currentAddress['pais']!),
+              ],
+            ),
           ),
-          _buildValidatedInput(
-            "Género*",
-            generoController,
-            isRequired: true,
-            isGender: true,
-          ),
-          _buildValidatedInput(
-            "Correo*",
-            emailController,
-            isRequired: true,
-            isEmail: true,
-          ),
-          _buildValidatedInput(
-            "CURP*",
-            curpController,
-            isRequired: true,
-            isCURP: true,
-          ),
-          _buildValidatedInput(
-            "Teléfono*",
-            telefonoController,
-            isRequired: true,
-            isPhone: true,
-          ),
-          _buildSaveButton(),
         ],
-      ),
+      ],
     );
   }
 
-  Widget _buildDatosEscolares() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildValidatedInput("Campus*", campusController, isRequired: true),
-          _buildValidatedInput(
-            "Programa*",
-            programaController,
-            isRequired: true,
+  Widget _buildEditForm() {
+    return Column(
+      children: [
+        // Información académica
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.blue[100]!),
           ),
-          _buildValidatedInput(
-            "Modalidad*",
-            modalidadController,
-            isRequired: true,
+          child: Column(
+            children: [
+              const Text('INFORMACIÓN ACADÉMICA', 
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+              const SizedBox(height: 15),
+              TextFormField(
+                initialValue: _currentData['matricula'],
+                decoration: _inputDecoration('Matrícula*', Icons.badge),
+                validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                onChanged: (value) => _currentData['matricula'] = value,
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                initialValue: _currentData['nombre'],
+                decoration: _inputDecoration('Nombre Completo*', Icons.person),
+                validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                onChanged: (value) => _currentData['nombre'] = value,
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                initialValue: _currentData['carrera'],
+                decoration: _inputDecoration('Carrera*', Icons.school),
+                validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                onChanged: (value) => _currentData['carrera'] = value,
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                initialValue: _currentData['claveCarrera'],
+                decoration: _inputDecoration('Clave de Carrera*', Icons.code),
+                validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                onChanged: (value) => _currentData['claveCarrera'] = value,
+              ),
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: _currentData['periodo'],
+                      decoration: _inputDecoration('Periodo*', Icons.calendar_today),
+                      validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                      onChanged: (value) => _currentData['periodo'] = value,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: _currentData['cuatrimestre'],
+                      decoration: _inputDecoration('Cuatrimestre*', Icons.format_list_numbered),
+                      validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) => _currentData['cuatrimestre'] = value,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: _currentData['materias'],
+                      decoration: _inputDecoration('Materias*', Icons.library_books),
+                      validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) => _currentData['materias'] = value,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: _currentData['modalidad'],
+                      decoration: _inputDecoration('Modalidad*', Icons.school),
+                      validator: (value) => value!.isEmpty ? 'Este campo es obligatorio' : null,
+                      onChanged: (value) => _currentData['modalidad'] = value,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          _buildValidatedInput(
-            "Plan Estudios*",
-            planEstudiosController,
-            isRequired: true,
-            isAlphanumeric: true,
+        ),
+        
+        const SizedBox(height: 20),
+        
+        // Datos personales
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.blue[100]!),
           ),
-          _buildValidatedInput(
-            "Grupo*",
-            grupoController,
-            isRequired: true,
-            isAlphanumeric: true,
+          child: Column(
+            children: [
+              const Text('DATOS PERSONALES', 
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+              const SizedBox(height: 15),
+              TextFormField(
+                initialValue: _currentData['telefono'],
+                decoration: _inputDecoration('Teléfono*', Icons.phone),
+                validator: (value) {
+                  if (value!.isEmpty) return 'Este campo es obligatorio';
+                  if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) return '10 dígitos requeridos';
+                  return null;
+                },
+                keyboardType: TextInputType.phone,
+                onChanged: (value) => _currentData['telefono'] = value,
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                initialValue: _currentData['email'],
+                decoration: _inputDecoration('Email*', Icons.email),
+                validator: (value) {
+                  if (value!.isEmpty) return 'Este campo es obligatorio';
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    return 'Correo inválido';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) => _currentData['email'] = value,
+              ),
+              const SizedBox(height: 15),
+              DropdownButtonFormField<String>(
+                value: _currentData['tipoSanguineo'],
+                decoration: _inputDecoration('Tipo Sanguíneo*', Icons.bloodtype),
+                items: tiposSanguineos.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                validator: (value) => value == null ? 'Este campo es obligatorio' : null,
+                onChanged: (value) {
+                  setState(() {
+                    _currentData['tipoSanguineo'] = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                initialValue: _currentData['alergias'],
+                decoration: _inputDecoration('Alergias', Icons.medical_services),
+                maxLines: 2,
+                onChanged: (value) => _currentData['alergias'] = value,
+              ),
+            ],
           ),
-          _buildSaveButton(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDireccion() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+  Widget _buildAddressForm() {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.blue[100]!),
+      ),
       child: Column(
         children: [
+          const Text('DATOS DE DIRECCIÓN', 
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+          const SizedBox(height: 15),
+          TextFormField(
+            initialValue: _currentAddress['calle'],
+            decoration: _inputDecoration('Calle', Icons.home),
+            onChanged: (value) => _currentAddress['calle'] = value,
+          ),
+          const SizedBox(height: 15),
           Row(
             children: [
               Expanded(
-                child: _buildValidatedInput(
-                  "Calle*",
-                  calleController,
-                  isRequired: true,
+                child: TextFormField(
+                  initialValue: _currentAddress['numExt'],
+                  decoration: _inputDecoration('Número Exterior', Icons.format_list_numbered),
+                  onChanged: (value) => _currentAddress['numExt'] = value,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _buildValidatedInput(
-                  "Núm Ext*",
-                  numExtController,
-                  isRequired: true,
-                  isNumber: true,
+                child: TextFormField(
+                  initialValue: _currentAddress['numInt'],
+                  decoration: _inputDecoration('Número Interior', Icons.format_list_numbered),
+                  onChanged: (value) => _currentAddress['numInt'] = value,
                 ),
               ),
             ],
           ),
-          _buildValidatedInput(
-            "Código Postal*",
-            cpController,
-            isRequired: true,
-            isPostalCode: true,
+          const SizedBox(height: 15),
+          TextFormField(
+            initialValue: _currentAddress['colonia'],
+            decoration: _inputDecoration('Colonia', Icons.location_city),
+            onChanged: (value) => _currentAddress['colonia'] = value,
           ),
-          _buildValidatedInput(
-            "Municipio*",
-            municipioController,
-            isRequired: true,
-            isName: true,
-          ),
-          _buildValidatedInput(
-            "Estado*",
-            estadoController,
-            isRequired: true,
-            isName: true,
-          ),
-          _buildSaveButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReferenciasPersonales() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildValidatedInput(
-            "Nombre Referencia 1*",
-            ref1NombreController,
-            isRequired: true,
-            isName: true,
-          ),
-          _buildValidatedInput(
-            "Teléfono*",
-            ref1TelefonoController,
-            isRequired: true,
-            isPhone: true,
-          ),
-
-          const Divider(),
-
-          _buildValidatedInput(
-            "Nombre Referencia 2",
-            ref2NombreController,
-            isName: true,
-          ),
-          _buildValidatedInput(
-            "Teléfono",
-            ref2TelefonoController,
-            isPhone: true,
-          ),
-          _buildSaveButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDatosLaborales() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildValidatedInput(
-            "Empresa*",
-            trabajaController,
-            isRequired: true,
-            maxLength: 50,
-          ),
-          _buildValidatedInput(
-            "Tipo de Empresa*",
-            tipoEmpresaController,
-            isRequired: true,
-            isName: true,
-          ),
+          const SizedBox(height: 15),
           Row(
             children: [
               Expanded(
-                child: _buildValidatedInput(
-                  "Año Inicio*",
-                  anioInicioController,
-                  isRequired: true,
-                  isYear: true,
+                child: TextFormField(
+                  initialValue: _currentAddress['cp'],
+                  decoration: _inputDecoration('Código Postal', Icons.markunread_mailbox),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) => _currentAddress['cp'] = value,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _buildValidatedInput(
-                  "Año Fin",
-                  anioFinController,
-                  isYear: true,
+                child: TextFormField(
+                  initialValue: _currentAddress['municipio'],
+                  decoration: _inputDecoration('Municipio', Icons.location_on),
+                  onChanged: (value) => _currentAddress['municipio'] = value,
                 ),
               ),
             ],
           ),
-          _buildValidatedInput(
-            "Horario Laboral*",
-            horarioLaboralController,
-            isRequired: true,
+          const SizedBox(height: 15),
+          TextFormField(
+            initialValue: _currentAddress['estado'],
+            decoration: _inputDecoration('Estado', Icons.map),
+            onChanged: (value) => _currentAddress['estado'] = value,
           ),
-          _buildValidatedInput(
-            "Puesto*",
-            puestoController,
-            isRequired: true,
-            maxLength: 40,
+          const SizedBox(height: 15),
+          TextFormField(
+            initialValue: _currentAddress['pais'],
+            decoration: _inputDecoration('País', Icons.public),
+            onChanged: (value) => _currentAddress['pais'] = value,
           ),
-          _buildValidatedInput(
-            "Horas Semanales*",
-            horasSemanalesController,
-            isRequired: true,
-            isNumber: true,
-          ),
-          _buildValidatedInput(
-            "¿Relación con carrera?*",
-            relacionCarreraController,
-            isRequired: true,
-            isBool: true,
-          ),
-          _buildSaveButton(),
         ],
       ),
     );
   }
 
-  Widget _buildDatosMedicos() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildValidatedInput(
-            "Tipo Sanguíneo*",
-            tipoSanguineoController,
-            isRequired: true,
-            isBloodType: true,
-          ),
-          _buildValidatedInput(
-            "RH*",
-            rhController,
-            isRequired: true,
-            isRH: true,
-          ),
-          _buildValidatedInput(
-            "Alergias*",
-            alergiasController,
-            isRequired: true,
-            maxLength: 100,
-          ),
-          _buildValidatedInput(
-            "Seguro Médico*",
-            seguroController,
-            isRequired: true,
-            maxLength: 50,
-          ),
-          _buildValidatedInput(
-            "Intervenciones Quirúrgicas",
-            intervencionesController,
-            maxLength: 200,
-          ),
-          _buildValidatedInput(
-            "Indicaciones Emergencia*",
-            indicacionesController,
-            isRequired: true,
-            maxLength: 200,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildValidatedInput(
-                  "Peso (kg)*",
-                  pesoController,
-                  isRequired: true,
-                  isNumber: true,
-                  maxLength: 3,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _buildValidatedInput(
-                  "Estatura (cm)*",
-                  estaturaController,
-                  isRequired: true,
-                  isNumber: true,
-                  maxLength: 3,
-                ),
-              ),
-            ],
-          ),
-          _buildSaveButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildValidatedInput(
-    String label,
-    TextEditingController controller, {
-    bool isRequired = false,
-    bool isEmail = false,
-    bool isPhone = false,
-    bool isDate = false,
-    bool isCURP = false,
-    bool isNumber = false,
-    bool isName = false,
-    bool isAlphanumeric = false,
-    bool isGender = false,
-    bool isBloodType = false,
-    bool isRH = false,
-    bool isYear = false,
-    bool isBool = false,
-    bool isPostalCode = false,
-    int? maxLength,
-  }) {
+  Widget _buildInfoRow(IconData icon, String label, String value, {bool isStatus = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextFormField(
-        controller: controller,
-        maxLength: maxLength,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-        validator: (value) {
-          if (isRequired && (value == null || value.isEmpty)) {
-            return 'Campo obligatorio';
-          }
-          if (value == null || value.isEmpty) return null;
-
-          if (isEmail &&
-              !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-            return 'Correo inválido';
-          }
-          if (isPhone && !RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-            return '10 dígitos requeridos';
-          }
-          if (isDate && !RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
-            return 'Formato DD/MM/AAAA';
-          }
-          if (isCURP &&
-              !RegExp(r'^[A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]{2}$').hasMatch(value)) {
-            return 'CURP inválida';
-          }
-          if (isNumber && !RegExp(r'^[0-9]+$').hasMatch(value)) {
-            return 'Solo números';
-          }
-          if (isName && !RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(value)) {
-            return 'Solo letras';
-          }
-          if (isAlphanumeric && !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
-            return 'Solo alfanumérico';
-          }
-          if (isGender &&
-              !['masculino', 'femenino'].contains(value.toLowerCase())) {
-            return 'Ingrese masculino/femenino';
-          }
-          if (isBloodType &&
-              !RegExp(r'^(A|B|AB|O)[+-]$').hasMatch(value.toUpperCase())) {
-            return 'Ejemplo: A+ o B-';
-          }
-          if (isRH && !['positivo', 'negativo'].contains(value.toLowerCase())) {
-            return 'Ingrese positivo/negativo';
-          }
-          if (isYear && !RegExp(r'^(19|20)\d{2}$').hasMatch(value)) {
-            return 'Año inválido (ej: 2023)';
-          }
-          if (isBool && !['si', 'no'].contains(value.toLowerCase())) {
-            return 'Responda con "si" o "no"';
-          }
-          if (isPostalCode && !RegExp(r'^[0-9]{5}$').hasMatch(value)) {
-            return '5 dígitos requeridos';
-          }
-          return null;
-        },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: Colors.blue[800]),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.blue[800],
+                )),
+                const SizedBox(height: 2),
+                Text(value, style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isStatus 
+                      ? Colors.green
+                      : Colors.black,
+                )),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSaveButton() {
-    return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Datos guardados correctamente"),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Complete los campos requeridos"),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue,
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon, size: 20, color: Colors.blue[800]),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: Colors.blue[800]!),
       ),
-      child: const Text(
-        "Guardar",
-        style: TextStyle(fontSize: 16, color: Colors.white),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: Colors.blue[800]!),
       ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.blue, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
     );
   }
 }

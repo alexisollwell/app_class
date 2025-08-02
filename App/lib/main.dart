@@ -1,3 +1,4 @@
+import 'package:cesunapp/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:cesunapp/pages/load_page.dart';
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
 
-      home: const LoadPage(),
+      home: const HomePage(),
     );
   }
 }
