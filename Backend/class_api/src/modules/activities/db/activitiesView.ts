@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { Activity } from "../../../types/activity.js";
 
-export async function activitesPerUser(connection: PrismaClient, student_id: number): Promise<Activity[]> {
+export async function activitesPerService(connection: PrismaClient, id: number): Promise<Activity[]> {
     try {
     const viewQuerie = await connection.serviceActivitiesByUser.findMany({
-        where: { student_id: student_id },
+        where: { service_id: id },
     })
     return viewQuerie.map(activity => ({
         studentId: activity.student_id || undefined,

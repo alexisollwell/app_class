@@ -5,8 +5,9 @@ import { validateKey } from "../../../utils/deHashTool.js";
 
 export async function credentialVerify( verifyInfo: User): Promise<Request<string>> {
     const connection = new PrismaClient()
+    
     try {
-        const viewQuerie = await connection.user.findMany({
+        const viewQuerie = await connection.user.findFirst({
             where: { userName: verifyInfo.userName }
         })
 
@@ -14,7 +15,7 @@ export async function credentialVerify( verifyInfo: User): Promise<Request<strin
             return { success: false, statusCode: 401, data: "Credenciales Incorrectas" };
         }
 
-        const keyValidation = await validateKey(verifyInfo.pssKey, viewQuerie[0].pssKey);
+        const keyValidation = await validateKey(verifyInfo.pssKey, viewQuerie.pssKey);
 
         if (!keyValidation) {
             return { success: false, statusCode: 401, data: "Incorrect Password" };

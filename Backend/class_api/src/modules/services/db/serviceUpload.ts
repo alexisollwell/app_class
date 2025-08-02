@@ -32,7 +32,7 @@ export async function uploadService(
         data: {
           student_id,
           serviceType_id: serviceData.serviceType_id,
-          servicesStartDate: dateFormat(serviceData.serviceStartDate),
+          servicesStartDate: await dateFormat(serviceData.serviceStartDate),
           service_status_id: serviceData.service_status_id,
           supervisorName: serviceData.supervisorName,
           supervisorContactNumber: serviceData.supervisorContactNumber,

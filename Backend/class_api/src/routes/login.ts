@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { recieveCredentials } from "../controllers/authentication.js";
-import { registerRequest } from "../controllers/registerRequest.js";
+import { recieveCredentials } from "../modules/authentication/controllers/authentication.js";
+import { registerRequest } from "../modules/authentication/controllers/registerRequest.js";
 
 export const auth = new Hono();
 

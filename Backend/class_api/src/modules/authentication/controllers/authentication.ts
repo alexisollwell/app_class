@@ -19,8 +19,8 @@ export const recieveCredentials = async (c: Context): Promise<Request<authentica
 
         let verification;
 
-        if (credentialFormatting.data){
-           verification = await credentialVerify(credentialFormatting.data)
+        if (credentialFormatting.data) {
+            verification = await credentialVerify(credentialFormatting.data)
         }
 
         if (!verification?.success) {
@@ -37,34 +37,42 @@ export const recieveCredentials = async (c: Context): Promise<Request<authentica
                 statusCode: verification.statusCode,
             };
         }
-        else{
+        else {
             const payload: loginPayload = {
-                email:  credentialFormatting.data?.email || "",
+                email: credentialFormatting.data?.email || "",
                 exp: Math.floor(Date.now() / 1000) + 60 * 60
             }
 
-            const token = await sign(payload, process.env.secret || "")
+            const key_ = (process.env.secret || "")
+            if (key_ === "") {
+                return {
+                    success: false,
+                    error: "Env secret variable its not instanced.",
+                    statusCode: 500,
+                };
+            }
+            const token = await sign(payload, key_)
 
-            const tokens:authentication = {
+            const tokens: authentication = {
                 token: token,
                 payload: payload
             }
 
             const id = await studentIdGet(tokens);
-            if(id.data){
+            if (id.data) {
                 setCookie(c, "user", id.data);
             }
-    
-            setCookie(c, "token", token);            
 
-            return {success: true, statusCode: 200, data: tokens}
+            setCookie(c, "token", token);
+
+            return { success: true, statusCode: 200, data: tokens }
         }
     } catch (error) {
-        
+        console.log(error)
         return {
             success: false,
             error: (error as Error).message,
-            statusCode: 500, 
+            statusCode: 500,
         };
     }
 };

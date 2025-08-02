@@ -17,7 +17,7 @@ export class headerTitle{
         doc.setFont("montserrat","bold");
         doc.setFontSize(18);
         doc.text(this.staticText.header.title, this.x, this.y + 6);
-        doc.addImage(cesunLogo, 'png', this.x - 105, this.y - 17, 50, 30);
-        doc.addImage(numberImage, 'png', this.x + 120, this.y - 20, 80, 40);
+        doc.addImage(cesunLogo, 'png', this.x - 105, this.y - 18, 50, 30);
+        doc.addImage(numberImage, 'png', this.x + 120, this.y - 22, 80, 30);
     }
 }

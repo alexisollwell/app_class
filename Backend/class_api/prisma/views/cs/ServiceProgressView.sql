@@ -2,6 +2,10 @@ SELECT
   sv.serviceId,
   s.studentId,
   s.name,
+  s.careerInCourse,
+  ru.institutionName,
+  sv.supervisorName,
+  s.phoneNumber,
   s.institutionalEmail,
   st.type,
   tah.totalHours,
@@ -21,4 +25,5 @@ FROM
   cs.Student AS s
   JOIN cs.Service AS sv ON sv.student_id = s.studentId
   JOIN cs.ServiceType AS st ON st.serviceTypeId = sv.serviceType_id
-  JOIN cs.TotalActivityHours AS tah ON tah.service_id = sv.serviceId;
+  JOIN cs.TotalActivityHours AS tah ON tah.service_id = sv.serviceId
+  JOIN cs.ReceivingUnit AS ru ON ru.receivingUnitId = sv.receivingUnit_id;

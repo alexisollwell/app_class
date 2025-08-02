@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { Context } from "hono";
 import { Request } from "../../../types/genericRequest.js";
 import { serviceProgressView } from "../../../types/serviceProgress.js";
-import { servicesPerUser } from "../db/servicesPerUser.js";
+import { servicesPerUser } from "../db/serviceFunctions.js";
 import { getCookie } from "hono/cookie";
 
 export async function userServices(c: Context): Promise<Request<serviceProgressView[]>> {
