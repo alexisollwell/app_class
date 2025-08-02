@@ -1,4 +1,5 @@
-
+import 'package:cesunapp/Services/api_service.dart';
+import 'package:cesunapp/models/activity.dart';
 import 'package:flutter/material.dart';
 import 'package:cesunapp/pages/servicios/servicio_social_screen.dart';
 
@@ -14,9 +15,37 @@ class _FormularioActividadServicioSocialState
     extends State<FormularioActividadServicioSocial> {
   final _formKey = GlobalKey<FormState>();
 
+  final ApiService _apiService = ApiService();
+
   final fechaController = TextEditingController();
   final horasController = TextEditingController();
   final descripcionController = TextEditingController();
+
+  int serviceId = 2;
+
+  Future<void> _uploadActivities() async {
+    if (_formKey.currentState!.validate()) {
+      // Construye el objeto Activity con los datos del formulario
+      final activity = Activity(
+        postingDate: fechaController.text,
+        hours: int.tryParse(horasController.text) ?? 0,
+        description: descripcionController.text,
+      );
+
+      // Llama a apiService
+      final response = await _apiService.uploadActivity([activity], serviceId);
+      
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Datos guardados correctamente')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.error ?? 'Error al guardar')),
+        );
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -29,9 +58,7 @@ class _FormularioActividadServicioSocialState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Actividad de Servicio Social'),
-      ),
+      appBar: AppBar(title: const Text('Actividad de Servicio Social')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -40,7 +67,8 @@ class _FormularioActividadServicioSocialState
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -48,8 +76,10 @@ class _FormularioActividadServicioSocialState
                   children: const [
                     Text(
                       'Nombre del estudiante: Juan Pérez López',
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 8),
                     Text('Programa: ING. DES. SOFTWARE'),
@@ -84,7 +114,7 @@ class _FormularioActividadServicioSocialState
                       if (pickedDate != null) {
                         setState(() {
                           fechaController.text =
-                          "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+                              "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
                         });
                       }
                     },
@@ -136,15 +166,7 @@ class _FormularioActividadServicioSocialState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                  Text('Datos guardados correctamente')),
-                            );
-                          }
-                        },
+                        onPressed: _uploadActivities,
                         child: const Text('Guardar'),
                       ),
                       ElevatedButton(
@@ -157,14 +179,15 @@ class _FormularioActividadServicioSocialState
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey),
+                          backgroundColor: Colors.grey,
+                        ),
                         child: const Text('Regresar'),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

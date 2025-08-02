@@ -1,4 +1,5 @@
 import 'package:cesunapp/Services/api_service.dart';
+import 'package:cesunapp/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
@@ -19,12 +20,16 @@ class _LoginPageState extends State<LoginPage> {
   final ApiService _apiService = ApiService();
 
   Future<void> _login() async {
+    // print("La validacion de datos en la APP esta inhabilitado!");
+    // if (true) {
     if (_formKey.currentState!.validate()) {
       final email = _userController.text.trim();
       final password = _passwordController.text;
 
+      final User data = User(email: email, pssKey: password);
+
       try {
-        final response = await _apiService.login(email, password);
+        final response = await _apiService.login(data);
         if (response.success) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('isLoggedIn', true);
