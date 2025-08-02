@@ -1,4 +1,6 @@
+import 'package:cesunapp/pages/load_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StudentPage extends StatefulWidget {
   const StudentPage({super.key});
@@ -11,6 +13,16 @@ class _StudentPageState extends State<StudentPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoadPage()),
+      (route) => false,
+    );
+  }
 
   // Controladores para Datos Generales
   final matriculaController = TextEditingController();
@@ -111,6 +123,13 @@ class _StudentPageState extends State<StudentPage>
             Tab(text: 'Datos Médicos'),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar sesión',
+            onPressed: _logout,
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,
@@ -154,8 +173,10 @@ class _StudentPageState extends State<StudentPage>
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Text("22020080",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                Text(
+                  "22020080",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
                 SizedBox(height: 4),
                 Text("ALVAREZ RODRIGUEZ ESMERALDA"),
                 SizedBox(height: 4),
@@ -179,24 +200,59 @@ class _StudentPageState extends State<StudentPage>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildValidatedInput("Matrícula*", matriculaController,
-              isRequired: true, isAlphanumeric: true),
-          _buildValidatedInput("Nombre*", nombreController,
-              isRequired: true, isName: true),
-          _buildValidatedInput("Apellido Paterno*", apellidoPController,
-              isRequired: true, isName: true),
-          _buildValidatedInput("Apellido Materno", apellidoMController,
-              isName: true),
-          _buildValidatedInput("Fecha Nacimiento*", fechaNacimientoController,
-              isRequired: true, isDate: true),
-          _buildValidatedInput("Género*", generoController,
-              isRequired: true, isGender: true),
-          _buildValidatedInput("Correo*", emailController,
-              isRequired: true, isEmail: true),
-          _buildValidatedInput("CURP*", curpController,
-              isRequired: true, isCURP: true),
-          _buildValidatedInput("Teléfono*", telefonoController,
-              isRequired: true, isPhone: true),
+          _buildValidatedInput(
+            "Matrícula*",
+            matriculaController,
+            isRequired: true,
+            isAlphanumeric: true,
+          ),
+          _buildValidatedInput(
+            "Nombre*",
+            nombreController,
+            isRequired: true,
+            isName: true,
+          ),
+          _buildValidatedInput(
+            "Apellido Paterno*",
+            apellidoPController,
+            isRequired: true,
+            isName: true,
+          ),
+          _buildValidatedInput(
+            "Apellido Materno",
+            apellidoMController,
+            isName: true,
+          ),
+          _buildValidatedInput(
+            "Fecha Nacimiento*",
+            fechaNacimientoController,
+            isRequired: true,
+            isDate: true,
+          ),
+          _buildValidatedInput(
+            "Género*",
+            generoController,
+            isRequired: true,
+            isGender: true,
+          ),
+          _buildValidatedInput(
+            "Correo*",
+            emailController,
+            isRequired: true,
+            isEmail: true,
+          ),
+          _buildValidatedInput(
+            "CURP*",
+            curpController,
+            isRequired: true,
+            isCURP: true,
+          ),
+          _buildValidatedInput(
+            "Teléfono*",
+            telefonoController,
+            isRequired: true,
+            isPhone: true,
+          ),
           _buildSaveButton(),
         ],
       ),
@@ -209,12 +265,28 @@ class _StudentPageState extends State<StudentPage>
       child: Column(
         children: [
           _buildValidatedInput("Campus*", campusController, isRequired: true),
-          _buildValidatedInput("Programa*", programaController, isRequired: true),
-          _buildValidatedInput("Modalidad*", modalidadController, isRequired: true),
-          _buildValidatedInput("Plan Estudios*", planEstudiosController,
-              isRequired: true, isAlphanumeric: true),
-          _buildValidatedInput("Grupo*", grupoController,
-              isRequired: true, isAlphanumeric: true),
+          _buildValidatedInput(
+            "Programa*",
+            programaController,
+            isRequired: true,
+          ),
+          _buildValidatedInput(
+            "Modalidad*",
+            modalidadController,
+            isRequired: true,
+          ),
+          _buildValidatedInput(
+            "Plan Estudios*",
+            planEstudiosController,
+            isRequired: true,
+            isAlphanumeric: true,
+          ),
+          _buildValidatedInput(
+            "Grupo*",
+            grupoController,
+            isRequired: true,
+            isAlphanumeric: true,
+          ),
           _buildSaveButton(),
         ],
       ),
@@ -228,19 +300,42 @@ class _StudentPageState extends State<StudentPage>
         children: [
           Row(
             children: [
-              Expanded(child: _buildValidatedInput("Calle*", calleController,
-                  isRequired: true)),
+              Expanded(
+                child: _buildValidatedInput(
+                  "Calle*",
+                  calleController,
+                  isRequired: true,
+                ),
+              ),
               const SizedBox(width: 10),
-              Expanded(child: _buildValidatedInput("Núm Ext*", numExtController,
-                  isRequired: true, isNumber: true)),
+              Expanded(
+                child: _buildValidatedInput(
+                  "Núm Ext*",
+                  numExtController,
+                  isRequired: true,
+                  isNumber: true,
+                ),
+              ),
             ],
           ),
-          _buildValidatedInput("Código Postal*", cpController,
-              isRequired: true, isPostalCode: true),
-          _buildValidatedInput("Municipio*", municipioController,
-              isRequired: true, isName: true),
-          _buildValidatedInput("Estado*", estadoController,
-              isRequired: true, isName: true),
+          _buildValidatedInput(
+            "Código Postal*",
+            cpController,
+            isRequired: true,
+            isPostalCode: true,
+          ),
+          _buildValidatedInput(
+            "Municipio*",
+            municipioController,
+            isRequired: true,
+            isName: true,
+          ),
+          _buildValidatedInput(
+            "Estado*",
+            estadoController,
+            isRequired: true,
+            isName: true,
+          ),
           _buildSaveButton(),
         ],
       ),
@@ -252,17 +347,31 @@ class _StudentPageState extends State<StudentPage>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildValidatedInput("Nombre Referencia 1*", ref1NombreController,
-              isRequired: true, isName: true),
-          _buildValidatedInput("Teléfono*", ref1TelefonoController,
-              isRequired: true, isPhone: true),
-          
+          _buildValidatedInput(
+            "Nombre Referencia 1*",
+            ref1NombreController,
+            isRequired: true,
+            isName: true,
+          ),
+          _buildValidatedInput(
+            "Teléfono*",
+            ref1TelefonoController,
+            isRequired: true,
+            isPhone: true,
+          ),
+
           const Divider(),
-          
-          _buildValidatedInput("Nombre Referencia 2", ref2NombreController,
-              isName: true),
-          _buildValidatedInput("Teléfono", ref2TelefonoController,
-              isPhone: true),
+
+          _buildValidatedInput(
+            "Nombre Referencia 2",
+            ref2NombreController,
+            isName: true,
+          ),
+          _buildValidatedInput(
+            "Teléfono",
+            ref2TelefonoController,
+            isPhone: true,
+          ),
           _buildSaveButton(),
         ],
       ),
@@ -274,31 +383,61 @@ class _StudentPageState extends State<StudentPage>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildValidatedInput("Empresa*", trabajaController, 
-              isRequired: true, maxLength: 50),
-          _buildValidatedInput("Tipo de Empresa*", tipoEmpresaController, 
-              isRequired: true, isName: true),
+          _buildValidatedInput(
+            "Empresa*",
+            trabajaController,
+            isRequired: true,
+            maxLength: 50,
+          ),
+          _buildValidatedInput(
+            "Tipo de Empresa*",
+            tipoEmpresaController,
+            isRequired: true,
+            isName: true,
+          ),
           Row(
             children: [
               Expanded(
-                child: _buildValidatedInput("Año Inicio*", anioInicioController, 
-                    isRequired: true, isYear: true)
+                child: _buildValidatedInput(
+                  "Año Inicio*",
+                  anioInicioController,
+                  isRequired: true,
+                  isYear: true,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _buildValidatedInput("Año Fin", anioFinController, 
-                    isYear: true)
+                child: _buildValidatedInput(
+                  "Año Fin",
+                  anioFinController,
+                  isYear: true,
+                ),
               ),
             ],
           ),
-          _buildValidatedInput("Horario Laboral*", horarioLaboralController, 
-              isRequired: true),
-          _buildValidatedInput("Puesto*", puestoController, 
-              isRequired: true, maxLength: 40),
-          _buildValidatedInput("Horas Semanales*", horasSemanalesController, 
-              isRequired: true, isNumber: true),
-          _buildValidatedInput("¿Relación con carrera?*", relacionCarreraController, 
-              isRequired: true, isBool: true),
+          _buildValidatedInput(
+            "Horario Laboral*",
+            horarioLaboralController,
+            isRequired: true,
+          ),
+          _buildValidatedInput(
+            "Puesto*",
+            puestoController,
+            isRequired: true,
+            maxLength: 40,
+          ),
+          _buildValidatedInput(
+            "Horas Semanales*",
+            horasSemanalesController,
+            isRequired: true,
+            isNumber: true,
+          ),
+          _buildValidatedInput(
+            "¿Relación con carrera?*",
+            relacionCarreraController,
+            isRequired: true,
+            isBool: true,
+          ),
           _buildSaveButton(),
         ],
       ),
@@ -310,28 +449,61 @@ class _StudentPageState extends State<StudentPage>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildValidatedInput("Tipo Sanguíneo*", tipoSanguineoController, 
-              isRequired: true, isBloodType: true),
-          _buildValidatedInput("RH*", rhController, 
-              isRequired: true, isRH: true),
-          _buildValidatedInput("Alergias*", alergiasController, 
-              isRequired: true, maxLength: 100),
-          _buildValidatedInput("Seguro Médico*", seguroController, 
-              isRequired: true, maxLength: 50),
-          _buildValidatedInput("Intervenciones Quirúrgicas", intervencionesController, 
-              maxLength: 200),
-          _buildValidatedInput("Indicaciones Emergencia*", indicacionesController, 
-              isRequired: true, maxLength: 200),
+          _buildValidatedInput(
+            "Tipo Sanguíneo*",
+            tipoSanguineoController,
+            isRequired: true,
+            isBloodType: true,
+          ),
+          _buildValidatedInput(
+            "RH*",
+            rhController,
+            isRequired: true,
+            isRH: true,
+          ),
+          _buildValidatedInput(
+            "Alergias*",
+            alergiasController,
+            isRequired: true,
+            maxLength: 100,
+          ),
+          _buildValidatedInput(
+            "Seguro Médico*",
+            seguroController,
+            isRequired: true,
+            maxLength: 50,
+          ),
+          _buildValidatedInput(
+            "Intervenciones Quirúrgicas",
+            intervencionesController,
+            maxLength: 200,
+          ),
+          _buildValidatedInput(
+            "Indicaciones Emergencia*",
+            indicacionesController,
+            isRequired: true,
+            maxLength: 200,
+          ),
           Row(
             children: [
               Expanded(
-                child: _buildValidatedInput("Peso (kg)*", pesoController, 
-                    isRequired: true, isNumber: true, maxLength: 3)
+                child: _buildValidatedInput(
+                  "Peso (kg)*",
+                  pesoController,
+                  isRequired: true,
+                  isNumber: true,
+                  maxLength: 3,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _buildValidatedInput("Estatura (cm)*", estaturaController, 
-                    isRequired: true, isNumber: true, maxLength: 3)
+                child: _buildValidatedInput(
+                  "Estatura (cm)*",
+                  estaturaController,
+                  isRequired: true,
+                  isNumber: true,
+                  maxLength: 3,
+                ),
               ),
             ],
           ),
@@ -341,7 +513,9 @@ class _StudentPageState extends State<StudentPage>
     );
   }
 
-  Widget _buildValidatedInput(String label, TextEditingController controller, {
+  Widget _buildValidatedInput(
+    String label,
+    TextEditingController controller, {
     bool isRequired = false,
     bool isEmail = false,
     bool isPhone = false,
@@ -373,7 +547,8 @@ class _StudentPageState extends State<StudentPage>
           }
           if (value == null || value.isEmpty) return null;
 
-          if (isEmail && !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+          if (isEmail &&
+              !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
             return 'Correo inválido';
           }
           if (isPhone && !RegExp(r'^[0-9]{10}$').hasMatch(value)) {
@@ -382,7 +557,8 @@ class _StudentPageState extends State<StudentPage>
           if (isDate && !RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
             return 'Formato DD/MM/AAAA';
           }
-          if (isCURP && !RegExp(r'^[A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]{2}$').hasMatch(value)) {
+          if (isCURP &&
+              !RegExp(r'^[A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]{2}$').hasMatch(value)) {
             return 'CURP inválida';
           }
           if (isNumber && !RegExp(r'^[0-9]+$').hasMatch(value)) {
@@ -394,10 +570,12 @@ class _StudentPageState extends State<StudentPage>
           if (isAlphanumeric && !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
             return 'Solo alfanumérico';
           }
-          if (isGender && !['masculino', 'femenino'].contains(value.toLowerCase())) {
+          if (isGender &&
+              !['masculino', 'femenino'].contains(value.toLowerCase())) {
             return 'Ingrese masculino/femenino';
           }
-          if (isBloodType && !RegExp(r'^(A|B|AB|O)[+-]$').hasMatch(value.toUpperCase())) {
+          if (isBloodType &&
+              !RegExp(r'^(A|B|AB|O)[+-]$').hasMatch(value.toUpperCase())) {
             return 'Ejemplo: A+ o B-';
           }
           if (isRH && !['positivo', 'negativo'].contains(value.toLowerCase())) {
