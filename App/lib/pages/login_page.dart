@@ -1,3 +1,4 @@
+import 'package:cesunapp/Services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
@@ -15,21 +16,43 @@ class _LoginPageState extends State<LoginPage> {
   final _userController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  final ApiService _apiService = ApiService();
+
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
+      final email = _userController.text.trim();
+      final password = _passwordController.text;
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomePage()),
-      );
+      try {
+        final response = await _apiService.login(email, password);
+        if (response.success) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomePage()),
+          );
+        } else {
+          _showError(response.error ?? 'Credenciales incorrectas');
+        }
+      } catch (e) {
+        _showError('Error de conexión o credenciales inválidas');
+      }
     }
   }
 
+  // Muestra mensajes de error
+  void _showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  // Navega a la pagina de registro
   void _goToRegister() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const RegistroPage()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const RegistroPage()));
   }
 
   @override
@@ -41,7 +64,9 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.all(16.0),
           child: Card(
             elevation: 10,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Form(
@@ -54,11 +79,12 @@ class _LoginPageState extends State<LoginPage> {
                       child: Image.asset(
                         'assets/images/cesun_logo.png',
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.school,
-                          size: 60,
-                          color: Colors.blueAccent,
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.school,
+                              size: 60,
+                              color: Colors.blueAccent,
+                            ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -81,13 +107,16 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Ingrese su matrícula o correo institucional';
+                          return 'Ingrese su correo institucional';
                         }
                         final matriculaRegExp = RegExp(r'^\d{8}$');
-                        final correoRegExp = RegExp(r'^[\w\.\-]+@cesunbc\.edu\.mx$');
+                        final correoRegExp = RegExp(
+                          r'^[\w\.\-]+@cesunbc\.edu\.mx$',
+                        );
                         final input = value.trim();
-                        if (!matriculaRegExp.hasMatch(input) && !correoRegExp.hasMatch(input)) {
-                          return 'Ingrese una matrícula válida (8 dígitos) o correo @cesunbc.edu.mx';
+                        if (!matriculaRegExp.hasMatch(input) &&
+                            !correoRegExp.hasMatch(input)) {
+                          return 'Ingrese un correo valido (@cesunbc.edu.mx)';
                         }
                         return null;
                       },
@@ -127,13 +156,15 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: const Text(
                           'Iniciar Sesión',
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
                     Divider(),
-                    const SizedBox(height: 8),
                     TextButton(
                       onPressed: _goToRegister,
                       child: const Text(
